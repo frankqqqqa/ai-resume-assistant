@@ -1,0 +1,5 @@
+{
+  "name": "AI 简历助手",
+  "description": "AI 驱动的简历优化工作台，帮助用户根据目标岗位 JD 优化简历经历。",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,60 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme {
+  --color-apple-blue: #0071e3;
+  --color-apple-gray: #f5f5f7;
+  --color-apple-text: #1d1d1f;
+  --color-apple-border: #d2d2d7;
+  --color-card-bg: #ffffff;
+  --color-background-light: #FBFBFB;
+  --color-background-dark: #000000;
+  
+  --font-sans: var(--font-noto-sans-sc), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.03);
+  --shadow-card: 0 10px 40px -10px rgba(0,0,0,0.05);
+  --shadow-button-glow: 0 0 20px rgba(0, 113, 227, 0.4);
+  --shadow-paper: 0 2px 12px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 20px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0,0,0,0.2);
+  }
+  .glass-nav {
+    background-color: rgba(251, 251, 251, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .glossy-button {
+    position: relative;
+    overflow: hidden;
+  }
+  .glossy-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 100%);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+  .bg-button-gradient {
+    background-image: linear-gradient(180deg, #0077ED 0%, #0071e3 100%);
+  }
+}
