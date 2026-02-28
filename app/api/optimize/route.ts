@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase, Suggestion } from '@/lib/supabase';
+import { createSupabaseServerClient } from '@/lib/supabase-server';
+import { Suggestion } from '@/lib/supabase';
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const MODEL = 'stepfun/step-3.5-flash:free';
@@ -22,6 +23,10 @@ export async function POST(req: NextRequest) {
                 { status: 500 }
             );
         }
+
+        // 获取当前登录用户
+        const supabase = await createSupabaseServerClient();
+        const { data: { user } } = await supabase.auth.getUser();
 
         const systemPrompt = `你是一位专业的简历优化顾问，专注于帮助数据分析领域的求职者。
 你的任务是分析用户的简历经历，并与目标岗位 JD 进行对比，给出具体的优化建议。
@@ -88,7 +93,6 @@ ${jdText}
 
         let suggestions: Suggestion[] = [];
         try {
-            // Remove potential markdown code fences
             const cleaned = rawContent
                 .replace(/```json\s*/gi, '')
                 .replace(/```\s*/gi, '')
@@ -103,20 +107,20 @@ ${jdText}
             );
         }
 
-        // Save to Supabase
+        // 保存到 Supabase（带 user_id）
         const { data: record, error: dbError } = await supabase
             .from('optimization_records')
             .insert({
                 resume_text: resumeText,
                 jd_text: jdText,
                 suggestions,
+                user_id: user?.id ?? null,
             })
             .select('id')
             .single();
 
         if (dbError) {
             console.error('Supabase insert error:', dbError);
-            // Return suggestions even if DB save fails
             return NextResponse.json({ suggestions, recordId: null });
         }
 

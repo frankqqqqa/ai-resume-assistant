@@ -1,7 +1,7 @@
 'use client';
 
-import Image from 'next/image';
-import { useState, useCallback } from 'react';
+
+import { useState, useCallback, useEffect } from 'react';
 import {
   Bot,
   Bell,
@@ -18,8 +18,10 @@ import {
   Loader2,
   AlertCircle,
   Clock,
+  LogOut,
 } from 'lucide-react';
 import type { Suggestion, OptimizationRecord } from '@/lib/supabase';
+import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 
 const KEYWORD_COLORS = [
   'bg-blue-500',
@@ -231,6 +233,21 @@ export default function Home() {
   const [historyRecords, setHistoryRecords] = useState<OptimizationRecord[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
 
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const supabase = createSupabaseBrowserClient();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUserEmail(user?.email ?? null);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/login';
+  };
+
   const handleOptimize = async () => {
     if (!resumeText.trim() || !jdText.trim()) {
       setError('请填写简历经历和目标岗位 JD');
@@ -318,16 +335,17 @@ export default function Home() {
               <Bell className="w-[22px] h-[22px]" />
             </button>
             <div className="h-4 w-[1px] bg-gray-300" />
-            <button className="flex items-center gap-2 group">
-              <div className="w-8 h-8 rounded-full bg-gray-100 overflow-hidden ring-1 ring-black/5 group-hover:ring-apple-blue/30 transition-all shadow-sm relative">
-                <Image
-                  alt="User Profile"
-                  fill
-                  className="object-cover"
-                  src="https://picsum.photos/100/100"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
+            {userEmail && (
+              <span className="text-[12px] text-gray-400 hidden sm:block max-w-[120px] truncate">
+                {userEmail}
+              </span>
+            )}
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 text-gray-400 hover:text-red-500 transition-colors px-2 py-1 rounded-lg hover:bg-red-50"
+              title="退出登录"
+            >
+              <LogOut className="w-[18px] h-[18px]" />
             </button>
           </div>
         </div>

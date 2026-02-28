@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { createSupabaseServerClient } from '@/lib/supabase-server';
 
 export async function GET() {
     try {
+        const supabase = await createSupabaseServerClient();
+
         const { data, error } = await supabase
             .from('optimization_records')
             .select('id, resume_text, jd_text, suggestions, created_at')
